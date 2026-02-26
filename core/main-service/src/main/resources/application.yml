@@ -1,0 +1,56 @@
+server:
+  port: 0
+
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/ewm-db}
+    username: ${DATASOURCE_USERNAME:postgres}
+    password: ${DATASOURCE_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      defer-datasource-initialization: true
+      hibernate:
+        format_sql: true
+        show_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+  application:
+    name: main-service
+    config:
+      import: "configserver:"
+
+  cloud:
+    config:
+      fail-fast: true
+      discovery:
+        service-id: config-server
+        enabled: true
+      retry:
+        max-interval: 10000
+        use-random-policy: true
+
+eureka:
+  instance:
+    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    lease-expiration-duration-in-seconds: 10
+    lease-renewal-interval-in-seconds: 5
+  client:
+    service-url:
+      enabled: true
+      defaultZone: http://${eureka.instance.hostname:localhost}:${eureka.instance.port:8761}/eureka
+
+logging:
+  level:
+    org.springframework.orm.jpa: INFO
+    org.springframework.transaction: INFO
+    org.springframework.transaction.interceptor: TRACE
+    org.springframework.orm.jpa.JpaTransactionManager: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.tool.schema.internal: DEBUG
