@@ -1,54 +1,23 @@
-server:
-  port: 0
-
 spring:
-  sql:
-    init:
-      mode: always
-  datasource:
-    driverClassName: org.postgresql.Driver
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/stats_db}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: true
-    "properties.hibernate.format_sql": true
-
-  liquibase:
-    change-log: classpath:/db/changelog/db.changelog-master.yaml
-    clear-checksums: true
-
   application:
     name: stats-server
-    config:
-      import: "configserver:"
+  config:
+    import: "configserver:"
 
-    cloud:
-      config:
-        fail-fast: true
-        discovery:
-          service-id: config-server
-          enabled: true
-        retry:
-          max-interval: 10000
-          use-random-policy: true
+  cloud:
+    config:
+      fail-fast: true
+      discovery:
+        service-id: config-server
+        enabled: true
+      retry:
+        max-interval: 6000
+        use-random-policy: true
 
 eureka:
   instance:
     instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-    lease-expiration-duration-in-seconds: 10
-    lease-renewal-interval-in-seconds: 5
   client:
     service-url:
       enabled: true
       defaultZone: http://${eureka.instance.hostname:localhost}:${eureka.instance.port:8761}/eureka
-
-logging:
-  level:
-    "org.zalando.logbook": TRACE
-    "org.springframework.orm.jpa": INFO
-    "org.springframework.orm.jpa.JpaTransactionManager": DEBUG
-    "org.springframework.transaction": INFO
-    "org.springframework.transaction.interceptor": TRACE
