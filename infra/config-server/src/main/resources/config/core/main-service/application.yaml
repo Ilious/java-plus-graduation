@@ -9,7 +9,7 @@ spring:
       dialect: postgresql
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ewm-db}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:8432/ewm-db}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     hikari:
