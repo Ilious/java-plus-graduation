@@ -34,3 +34,6 @@ logging:
     org.springframework.orm.jpa.JpaTransactionManager: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.tool.schema.internal: DEBUG
+
+stats-server:
+  name: stats-server

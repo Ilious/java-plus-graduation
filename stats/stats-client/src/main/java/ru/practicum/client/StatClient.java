@@ -2,6 +2,8 @@ package ru.practicum.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,6 +17,7 @@ import ru.practicum.ewm.dto.ViewStatDto;
 import ru.practicum.ewm.exception.ApiError;
 import ru.practicum.utils.ResponseGenerator;
 
+import java.net.URI;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
@@ -25,24 +28,51 @@ public class StatClient extends ResponseGenerator {
 
     private final RestClient restClient;
 
+    private final DiscoveryClient discoveryClient;
+
     private static final DateTimeFormatter FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    private final String statServiceUrl;
+    @Value("${stats-server.name:stats-server}")
+    private String statServiceId;
 
-    public StatClient(@Value("${stat-svc-service.url}") String statServiceUrl) {
-        restClient = RestClient.builder()
-                .baseUrl(statServiceUrl)
-                .build();
+    public StatClient(DiscoveryClient discoveryClient) {
+        restClient = RestClient.create();
+        this.discoveryClient = discoveryClient;
+    }
 
-        this.statServiceUrl = statServiceUrl;
+    private ServiceInstance getInstance() {
+        List<ServiceInstance> instances = discoveryClient.getInstances(statServiceId);
+
+        if (instances == null || instances.isEmpty()) {
+            throw new IllegalStateException(
+                    String.format("Ошибка поиска сервиса статстики с id %s", statServiceId)
+            );
+        }
+
+        ServiceInstance instance = instances.getFirst();
+        log.debug("Обнаружен сервис {}:{}", instance.getHost(), instance.getPort());
+        return instance;
+    }
+
+    private URI getStatsServiceUri(String path) {
+        ServiceInstance instance = getInstance();
+        return UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host(instance.getHost())
+                .port(instance.getPort())
+                .path(path)
+                .build()
+                .toUri();
     }
 
     public ResponseEntity<Object> saveHit(EndpointHit hit) {
         try {
             log.info("Сохранение информации о запросе {}", hit);
+            URI hitUri = getStatsServiceUri("/hit");
+
             return makeResult(restClient.post()
-                    .uri("/hit")
+                    .uri(hitUri)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(hit)
                     .retrieve()
@@ -64,7 +94,9 @@ public class StatClient extends ResponseGenerator {
         try {
             log.info("Запрос статистики {}", request);
 
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(statServiceUrl + "/stats")
+            URI statsUri = getStatsServiceUri("/stats");
+
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUri(statsUri)
                     .queryParam("start", request.getStart().format(FORMATTER))
                     .queryParam("end", request.getEnd().format(FORMATTER))
                     .queryParam("unique", request.getUnique());
@@ -85,12 +117,12 @@ public class StatClient extends ResponseGenerator {
                 return response.getBody();
             } else {
                 log.error("Ошибка при получении статистики: {}", response.getStatusCode());
-                return Collections.emptyList(); // Или выбросить исключение, в зависимости от требований
+                return Collections.emptyList();
             }
 
         } catch (Exception e) {
             log.error("Ошибка при запросе статистики: {}", e.getMessage());
-            return Collections.emptyList(); // Или выбросить исключение, в зависимости от требований
+            return Collections.emptyList();
         }
     }
 }
