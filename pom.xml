@@ -7,7 +7,6 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.3.4</version>
-		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
 	<name>Explore With Me</name>
@@ -26,7 +25,12 @@
 		<java.version>21</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<lombok.version>1.18.32</lombok.version>
+		<mapstruct.version>1.6.3</mapstruct.version>
+		<mapstruct-processor.version>1.6.3</mapstruct-processor.version>
+		<lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
 		<spring-cloud-dependencies.version>2023.0.3</spring-cloud-dependencies.version>
+		<postgresql.version>42.7.4</postgresql.version>
+		<maven-jar-plugin.version>3.2.2</maven-jar-plugin.version>
 	</properties>
 
 	<dependencyManagement>
@@ -35,7 +39,6 @@
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
 				<version>${lombok.version}</version>
-				<optional>true</optional>
 				<scope>provided</scope>
 			</dependency>
 
@@ -45,6 +48,25 @@
 				<version>${spring-cloud-dependencies.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>${postgresql.version}</version>
+				<scope>runtime</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.mapstruct</groupId>
+				<artifactId>mapstruct</artifactId>
+				<version>${mapstruct.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.mapstruct</groupId>
+				<artifactId>mapstruct-processor</artifactId>
+				<version>${mapstruct-processor.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
