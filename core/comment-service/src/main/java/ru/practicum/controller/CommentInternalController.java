@@ -11,7 +11,7 @@ import ru.practicum.service.CommentService;
 @RequestMapping("/internal/comments")
 public class CommentInternalController implements CommentInternalOperations {
 
-    private CommentService commentService;
+    private final CommentService commentService;
 
     @Override
     public Long getCountPublishedCommentsByEventId(Long eventId) {

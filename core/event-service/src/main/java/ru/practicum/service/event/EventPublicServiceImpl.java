@@ -130,8 +130,10 @@ public class EventPublicServiceImpl implements EventPublicService {
     }
 
     @Override
+    @Transactional
     public void updateConfirmedRequests(Long eventId, int size) {
         Event event = getById(eventId);
         event.setConfirmedRequests(size);
+        eventRepository.save(event);
     }
 }

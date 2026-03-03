@@ -88,6 +88,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     }
 
     @Override
+    @Transactional
     public EventFullDto update(UpdateEventUserRequest request, Long userId, Long eventId) {
         Event event = checkUpdateEvent(userId, eventId);
         if (event.getState() == EventState.PUBLISHED) {

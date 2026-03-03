@@ -141,7 +141,7 @@ public class RequestServiceImpl implements RequestService {
         EventState eventState = EventState.valueOf(event.getState());
 
         if (event.getParticipantLimit() != 0 && event.getConfirmedRequests() >= event.getParticipantLimit()) {
-            throw new ConflictException("The participant limit has been reached");
+            throw new ConflictException("Лимит участников был достигнут");
         }
 
         if (eventState != EventState.PUBLISHED) {
