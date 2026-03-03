@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface CommentInternalOperations {
 
     @GetMapping("/{eventId}")
-    Long getCountPublishedCommentsByEventId(@PathVariable @Positive Long eventId);
+    Long getCountPublishedCommentsByEventId(@PathVariable("eventId") @Positive Long eventId);
 }
