@@ -6,7 +6,7 @@ import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Component;
 import ru.practicum.grpc.stats.action.ActionTypeProto;
 import ru.practicum.grpc.stats.action.UserActionProto;
-import ru.practicum.grpc.stats.collector.CollectorControllerGrpc;
+import ru.practicum.grpc.stats.collector.UserActionControllerGrpc;
 
 import java.time.Instant;
 
@@ -15,7 +15,7 @@ import java.time.Instant;
 public class CollectorClient {
 
     @GrpcClient("collector")
-    private CollectorControllerGrpc.CollectorControllerBlockingStub client;
+    private UserActionControllerGrpc.UserActionControllerBlockingStub client;
 
     public void collectUserAction(long userId, long eventId, ActionTypeProto actionType, Instant instant) {
         try {
