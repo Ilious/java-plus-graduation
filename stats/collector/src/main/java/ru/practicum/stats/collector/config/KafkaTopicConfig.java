@@ -1,4 +1,4 @@
-package ru.practicum.config;
+package ru.practicum.stats.collector.config;
 
 import lombok.Getter;
 import lombok.Setter;

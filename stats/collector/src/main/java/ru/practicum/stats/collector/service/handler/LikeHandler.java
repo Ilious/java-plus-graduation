@@ -1,9 +1,9 @@
-package ru.practicum.service.handler;
+package ru.practicum.stats.collector.service.handler;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.grpc.stats.action.ActionTypeProto;
-import ru.practicum.service.KafkaActionProducer;
-import ru.practicum.service.handler.base.BaseActionHandler;
+import ru.practicum.stats.collector.service.KafkaActionProducer;
+import ru.practicum.stats.collector.service.handler.base.BaseActionHandler;
 
 @Component
 public class LikeHandler extends BaseActionHandler {

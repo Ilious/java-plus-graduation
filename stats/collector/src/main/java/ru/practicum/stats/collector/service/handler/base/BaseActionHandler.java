@@ -1,4 +1,4 @@
-package ru.practicum.service.handler.base;
+package ru.practicum.stats.collector.service.handler.base;
 
 import com.google.protobuf.Timestamp;
 import lombok.RequiredArgsConstructor;
@@ -6,7 +6,7 @@ import ru.practicum.ewm.stats.avro.ActionType;
 import ru.practicum.ewm.stats.avro.UserActionAvro;
 import ru.practicum.grpc.stats.action.ActionTypeProto;
 import ru.practicum.grpc.stats.action.UserActionProto;
-import ru.practicum.service.KafkaActionProducer;
+import ru.practicum.stats.collector.service.KafkaActionProducer;
 
 import java.time.Instant;
 

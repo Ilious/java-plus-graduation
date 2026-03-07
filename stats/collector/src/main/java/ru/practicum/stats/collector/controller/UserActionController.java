@@ -1,4 +1,4 @@
-package ru.practicum.controller;
+package ru.practicum.stats.collector.controller;
 
 import com.google.protobuf.Empty;
 import io.grpc.Status;
@@ -8,8 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import ru.practicum.grpc.stats.action.ActionTypeProto;
 import ru.practicum.grpc.stats.action.UserActionProto;
-import ru.practicum.grpc.stats.collector.CollectorControllerGrpc;
-import ru.practicum.service.handler.base.ActionHandler;
+import ru.practicum.grpc.stats.collector.UserActionControllerGrpc;
+import ru.practicum.stats.collector.service.handler.base.ActionHandler;
 
 import java.util.Map;
 import java.util.Set;
@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @GrpcService
-public class CollectorController extends CollectorControllerGrpc.CollectorControllerImplBase {
+public class UserActionController extends UserActionControllerGrpc.UserActionControllerImplBase {
 
     private final Map<ActionTypeProto, ActionHandler> handlers;
 
-    public CollectorController(Set<ActionHandler> handlers) {
+    public UserActionController(Set<ActionHandler> handlers) {
         this.handlers = handlers.stream()
                 .collect(Collectors.toMap(ActionHandler::getMessageType, Function.identity()));
     }

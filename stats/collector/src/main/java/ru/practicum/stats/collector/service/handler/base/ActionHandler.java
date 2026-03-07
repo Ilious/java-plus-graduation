@@ -1,4 +1,4 @@
-package ru.practicum.service.handler.base;
+package ru.practicum.stats.collector.service.handler.base;
 
 
 import ru.practicum.ewm.stats.avro.UserActionAvro;
