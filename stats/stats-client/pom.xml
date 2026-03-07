@@ -36,13 +36,19 @@
         </dependency>
 
         <dependency>
-            <groupId>ru.practicum</groupId>
-            <artifactId>stats-dto</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-commons</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-commons</artifactId>
+            <groupId>net.devh</groupId>
+            <artifactId>grpc-client-spring-boot-starter</artifactId>
+            <version>${grpc-spring-boot-starter.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.practicum</groupId>
+            <artifactId>proto-schemas</artifactId>
         </dependency>
     </dependencies>
 </project>

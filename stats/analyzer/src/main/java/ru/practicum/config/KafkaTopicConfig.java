@@ -1,0 +1,17 @@
+package ru.practicum.config;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+@Getter
+@Setter
+@ConfigurationProperties(prefix = "server.kafka.topic-config")
+@Component
+public class KafkaTopicConfig {
+
+    private String userActions;
+
+    private String eventsSimilarity;
+}
