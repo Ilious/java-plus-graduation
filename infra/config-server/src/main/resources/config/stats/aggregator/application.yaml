@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: aggregator
+  main:
+    banner-mode: off
+
+  kafka:
+    bootstrap-servers: ${SERVER_KAFKA_ADDRESS:localhost:9092}
+
+    consumer:
+      properties:
+        "bootstrap.servers": ${spring.kafka.bootstrap-servers}
+        "group.id": aggregator-action-group
+        "auto.offset.reset": earliest
+        "enable.auto.commit": false
+        "key.deserializer": "org.apache.kafka.common.serialization.LongDeserializer"
+        "value.deserializer": "ru.practicum.deserializer.UserActionDeserializer"
+
+    producer:
+      properties:
+        "bootstrap.servers": ${spring.kafka.bootstrap-servers}
+        "client.id": aggregator-producer
+        "acks": 1
+        "key.serializer": "org.apache.kafka.common.serialization.StringSerializer"
+        "value.serializer": "ru.practicum.serializer.AvroSerializer"
+        "linger.ms": 0
+
+server:
+  port: 0
+  kafka:
+    topic-config:
+      user-actions: stats.user-actions.v1
+      events-similarity: stats.events-similarity.v1
+    consumer:
+      poll-timeout-ms: 100
+      batch-messages-count: 10
+
+logging:
+  level:
+    ru.practicum: TRACE
+    org:
+      springframework: ERROR
+      apache.kafka: WARN

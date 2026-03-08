@@ -14,23 +14,27 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>stats-server</module>
+        <module>collector</module>
         <module>stats-client</module>
-        <module>stats-dto</module>
+        <module>serialization</module>
+        <module>analyzer</module>
+        <module>aggregator</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>ru.practicum</groupId>
-                <artifactId>stats-client</artifactId>
+                <artifactId>proto-schemas</artifactId>
                 <version>${project.version}</version>
+                <scope>compile</scope>
             </dependency>
 
             <dependency>
                 <groupId>ru.practicum</groupId>
-                <artifactId>stats-dto</artifactId>
+                <artifactId>avro-schemas</artifactId>
                 <version>${project.version}</version>
+                <scope>compile</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

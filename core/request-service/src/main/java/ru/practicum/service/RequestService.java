@@ -24,4 +24,6 @@ public interface RequestService {
 
     EventRequestStatusUpdateResult updateRequest(EventRequestStatusUpdateRequest requestDto, Long userId,
                                                  Long eventId);
+
+    boolean existsByUserAndEvent(Long userId, Long eventId);
 }
