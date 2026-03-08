@@ -5,7 +5,7 @@ import io.grpc.StatusRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Component;
-import ru.practicum.grpc.stats.analyzer.RecommendationControllerGrpc;
+import ru.practicum.grpc.stats.analyzer.RecommendationsControllerGrpc;
 import ru.practicum.grpc.stats.recommendation.InteractionsCountRequestProto;
 import ru.practicum.grpc.stats.recommendation.RecommendedEventProto;
 import ru.practicum.grpc.stats.recommendation.SimilarEventsRequestProto;
@@ -23,7 +23,7 @@ import java.util.stream.StreamSupport;
 public class RecommendationClient {
 
     @GrpcClient("analyzer")
-    private RecommendationControllerGrpc.RecommendationControllerBlockingStub client;
+    private RecommendationsControllerGrpc.RecommendationsControllerBlockingStub client;
 
     public Stream<RecommendedEventProto> getSimilarEvents(long eventId, long userId, int maxResults) {
         try {

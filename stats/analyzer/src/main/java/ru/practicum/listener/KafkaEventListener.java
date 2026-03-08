@@ -33,19 +33,20 @@ public class KafkaEventListener extends BaseProcessor<String, EventSimilarityAvr
         consumer.subscribe(Collections.singleton(kafkaTopicConfig.getEventsSimilarity()));
 
         try {
-            ConsumerRecords<String, EventSimilarityAvro> records = consumer.poll(
-                    Duration.ofMillis(pollDurationMillis)
-            );
+            while (true) {
+                ConsumerRecords<String, EventSimilarityAvro> records = consumer.poll(
+                        Duration.ofMillis(pollDurationMillis)
+                );
 
-            int count = 0;
-            for (ConsumerRecord<String, EventSimilarityAvro> record: records) {
-                handleRecord(record);
+                int count = 0;
+                for (ConsumerRecord<String, EventSimilarityAvro> record : records) {
+                    handleRecord(record);
 
-                manageOffset(record, count, consumer);
+                    manageOffset(record, count, consumer);
 
-                count++;
+                    count++;
+                }
             }
-
         } catch (WakeupException e) {
             log.warn("KafkaEventListener got stop signal. Stopping KafkaEventListener");
         } catch (Exception e) {
@@ -62,6 +63,7 @@ public class KafkaEventListener extends BaseProcessor<String, EventSimilarityAvr
 
     @Override
     protected void handleRecord(ConsumerRecord<String, EventSimilarityAvro> record) {
+        log.trace("handling record for key {}: {}", record.key(), record.value());
         EventSimilarityAvro eventSimilarity = record.value();
         similarityService.upsertSimilarity(eventSimilarity);
     }

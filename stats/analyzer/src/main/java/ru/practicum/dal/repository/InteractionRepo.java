@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface InteractionRepo extends JpaRepository<Interaction, Long> {
 
     @Query("""
-            SELECT i.eventId, sum(i.rating) FROM interactions i
+            SELECT i.eventId AS eventId, sum(i.rating) AS score FROM interactions i
             WHERE i.eventId IN :eventIds
             GROUP BY i.eventId
             """)

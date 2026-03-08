@@ -23,6 +23,7 @@ public class KafkaConfig {
     public Consumer<String, EventSimilarityAvro> getEventConsumer() {
         KafkaConfigData.Consumer producerConfig = kafkaConfigData.getConsumer();
         Properties properties = producerConfig.getProperties();
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "analyzer-similarity-group");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
                 "ru.practicum.deserializer.EventSimilarityDeserializer");
@@ -32,8 +33,10 @@ public class KafkaConfig {
 
     @Bean
     public Consumer<Long, UserActionAvro> getActionConsumer() {
+
         KafkaConfigData.Consumer producerConfig = kafkaConfigData.getConsumer();
         Properties properties = producerConfig.getProperties();
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "analyzer-action-group");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class);
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
                 "ru.practicum.deserializer.UserActionDeserializer");

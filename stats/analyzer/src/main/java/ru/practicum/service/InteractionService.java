@@ -4,15 +4,16 @@ import ru.practicum.dal.dao.Interaction;
 import ru.practicum.dal.dao.RecommendedEventProjection;
 import ru.practicum.ewm.stats.avro.UserActionAvro;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public interface InteractionService {
-    List<Long> getAllIdsById(Collection<Long> eventIds);
 
-    List<Interaction> getAllByUserId(Long userId);
+    void upsertInteraction(UserActionAvro action);
 
-    List<RecommendedEventProjection> getSumWeightsByEventId(Collection<Long> ids);
+    List<RecommendedEventProjection> getSumWeightsByEventId(Set<Long> eventIds);
 
-    Interaction upsertInteraction(UserActionAvro action);
+    List<Long> getAllIdsById(Set<Long> similarEventIds);
+
+    List<Interaction> getAllByUserId(long userId);
 }

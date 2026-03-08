@@ -80,7 +80,7 @@ public class EventPublicServiceImpl implements EventPublicService {
         sendViewAction(userId, eventId, Instant.now());
 
         Double eventRating = getEventRating(eventId);
-        event.setRatings(eventRating);
+        event.setRating(eventRating);
         log.debug("Метод getById, рейтинг: {}", eventRating);
 
         EventFullDto eventFullDto = eventMapperHelper.toEventFullDtoWithInitiator(event);
@@ -142,7 +142,7 @@ public class EventPublicServiceImpl implements EventPublicService {
                 .getRecommendationsForUser(userId, maxResults).map(eventProto -> {
                     long event = eventProto.getEventId();
                     EventShortDto eventShortDto = eventMapper.toEventShortDto(getById(event));
-                    eventShortDto.setRatings(eventProto.getScore());
+                    eventShortDto.setRating(eventProto.getScore());
                     return eventShortDto;
                 })
                 .toList();

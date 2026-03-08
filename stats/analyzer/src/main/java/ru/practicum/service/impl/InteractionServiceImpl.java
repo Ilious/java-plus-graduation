@@ -9,8 +9,8 @@ import ru.practicum.ewm.stats.avro.UserActionAvro;
 import ru.practicum.mapper.InteractionMapper;
 import ru.practicum.service.InteractionService;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -21,25 +21,15 @@ public class InteractionServiceImpl implements InteractionService {
     private final InteractionMapper interactionMapper;
 
     @Override
-    public List<Long> getAllIdsById(Collection<Long> eventIds) {
-        return interactionRepo.findAllByEventIdIn(eventIds);
-    }
-
-    @Override
-    public List<Interaction> getAllByUserId(Long userId) {
-        return interactionRepo.findAllByUserId(userId);
-    }
-
-    @Override
-    public List<RecommendedEventProjection> getSumWeightsByEventId(Collection<Long> ids) {
+    public List<RecommendedEventProjection> getSumWeightsByEventId(Set<Long> ids) {
         return interactionRepo.findSumWeightsByEventId(ids);
     }
 
     @Override
-    public Interaction upsertInteraction(UserActionAvro action) {
+    public void upsertInteraction(UserActionAvro action) {
         Interaction interaction = interactionMapper.toEntity(action);
 
-        return interactionRepo.findByEventIdAndUserId(action.getEventId(), action.getUserId())
+        interactionRepo.findByEventIdAndUserId(action.getEventId(), action.getUserId())
                 .map(entity -> {
                     if (entity.getRating() < interaction.getRating()) {
                         entity.setRating(interaction.getRating());
@@ -49,5 +39,15 @@ public class InteractionServiceImpl implements InteractionService {
                     return interaction;
                 })
                 .orElseGet(() -> interactionRepo.save(interaction));
+    }
+
+    @Override
+    public List<Interaction> getAllByUserId(long userId) {
+        return interactionRepo.findAllByUserId(userId);
+    }
+
+    @Override
+    public List<Long> getAllIdsById(Set<Long> similarEventIds) {
+        return interactionRepo.findAllByEventIdIn(similarEventIds);
     }
 }

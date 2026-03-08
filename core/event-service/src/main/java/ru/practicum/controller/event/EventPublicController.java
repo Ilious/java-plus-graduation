@@ -59,20 +59,20 @@ public class EventPublicController {
 
     @GetMapping("/{id}")
     public EventFullDto geEventById(@PathVariable @Positive Long id,
-                                    @RequestParam("X-EWM-USER-ID") Long userId) {
+                                    @RequestHeader("X-EWM-USER-ID") Long userId) {
         log.info("Запрос на получение события id = {}", id);
         return eventPublicService.getById(id, userId);
     }
 
     @GetMapping("/recommendations")
-    public List<EventShortDto> getRecommendations(@RequestParam("X-EWM-USER-ID") Long userId,
+    public List<EventShortDto> getRecommendations(@RequestHeader("X-EWM-USER-ID") Long userId,
                                                   @RequestParam(value = "max-result", required = false,
                                                           defaultValue = "10L") Long maxResults) {
         return eventPublicService.getRecommendationsForUser(userId, maxResults);
     }
 
     @PutMapping("/{eventId}/like")
-    public void sendLike(@RequestParam("X-EWM-USER-ID") Long userId,
+    public void sendLike(@RequestHeader("X-EWM-USER-ID") Long userId,
                          @PathVariable @Positive Long eventId) {
         eventPublicService.sendLike(userId, eventId);
     }

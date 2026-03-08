@@ -8,8 +8,9 @@ import ru.practicum.ewm.stats.avro.EventSimilarityAvro;
 import ru.practicum.mapper.SimilarityMapper;
 import ru.practicum.service.SimilarityService;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -20,24 +21,30 @@ public class SimilarityServiceImpl implements SimilarityService {
     private final SimilarityMapper similarityMapper;
 
     @Override
-    public Similarity upsertSimilarity(EventSimilarityAvro eventAvro) {
-        Similarity similarity = similarityMapper.toEntity(eventAvro);
+    public void upsertSimilarity(EventSimilarityAvro eventAvro) {
+        Long event1 = Math.min(eventAvro.getEventA(), eventAvro.getEventB());
+        Long event2 = Math.max(eventAvro.getEventA(), eventAvro.getEventB());
 
-        return similarityRepo.findByEventId1AndEventId2(similarity.getEventId1(), similarity.getEventId2())
-                .map(entity -> {
+        Similarity similarity = similarityMapper.toEntity(eventAvro, event1, event2);
+
+        similarityRepo.findByEventId1AndEventId2(event1, event2)
+                .ifPresentOrElse(entity -> {
                     entity.setSimilarity(similarity.getSimilarity());
                     entity.setTs(similarity.getTs());
-                    return similarityRepo.save(entity);
-                }).orElseGet(() -> similarityRepo.save(similarity));
+                    similarityRepo.save(entity);
+                }, () -> similarityRepo.save(similarity));
     }
 
     @Override
     public List<Similarity> getSimilarEvents(long userId, long eventId, long maxResults) {
-        return similarityRepo.findAllByEventId1OrEventId2(eventId, eventId);
+        return similarityRepo.findByEventIdOrderBySimilarityDesc(eventId, maxResults);
     }
 
     @Override
-    public List<Similarity> getAllByIdIn(Collection<Long> interactionIds) {
-        return similarityRepo.findAllByEventId1InOrEventId2In(interactionIds, interactionIds);
+    public List<Similarity> getAllByIdIn(Set<Long> eventIds) {
+        if (eventIds == null || eventIds.isEmpty())
+            return Collections.emptyList();
+
+        return similarityRepo.findByEventIdIn(eventIds);
     }
 }

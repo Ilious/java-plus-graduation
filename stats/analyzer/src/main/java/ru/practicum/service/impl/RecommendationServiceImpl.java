@@ -11,7 +11,7 @@ import ru.practicum.grpc.stats.recommendation.SimilarEventsRequestProto;
 import ru.practicum.grpc.stats.recommendation.UserPredictionsRequestProto;
 import ru.practicum.mapper.RecommendationMapper;
 import ru.practicum.service.InteractionService;
-import ru.practicum.service.RecommendationService;
+import ru.practicum.service.RecommendationsService;
 import ru.practicum.service.SimilarityService;
 
 import java.time.Instant;
@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-public class RecommendationServiceImpl implements RecommendationService {
+public class RecommendationServiceImpl implements RecommendationsService {
 
     private final InteractionService interactionService;
 
@@ -31,21 +31,21 @@ public class RecommendationServiceImpl implements RecommendationService {
     private final RecommendationMapper recommendationMapper;
 
     @Override
-    public List<RecommendedEventProto> getInteractionsCount(InteractionsCountRequestProto request) {
+    public Stream<RecommendedEventProto> getInteractionsCount(InteractionsCountRequestProto request) {
         Set<Long> eventIds = new HashSet<>(request.getEventIdList());
 
         List<RecommendedEventProjection> interactions = interactionService.getSumWeightsByEventId(eventIds);
 
         return interactions.stream()
+                .filter(it -> it.getEventId() != null)
                 .map(it -> RecommendedEventProto.newBuilder()
                         .setEventId(it.getEventId())
-                        .setScore(it.getScore())
-                        .build())
-                .toList();
+                        .setScore(it.getScore() == null ? 0.0 : it.getScore())
+                        .build());
     }
 
     @Override
-    public List<RecommendedEventProto> getSimilarEvents(SimilarEventsRequestProto request) {
+    public Stream<RecommendedEventProto> getSimilarEvents(SimilarEventsRequestProto request) {
         List<Similarity> similarEvents = similarityService.getSimilarEvents(request.getUserId(),
                 request.getEventId(), request.getMaxResults());
 
@@ -62,16 +62,15 @@ public class RecommendationServiceImpl implements RecommendationService {
                 ))
                 .filter(it -> !eventIdsUserInteracted.contains(it.getEventId()))
                 .sorted(Comparator.comparing(RecommendedEventProto::getScore).reversed())
-                .limit(request.getMaxResults())
-                .toList();
+                .limit(request.getMaxResults());
 
     }
 
     @Override
-    public List<RecommendedEventProto> getRecommendationsForUser(UserPredictionsRequestProto request) {
+    public Stream<RecommendedEventProto> getRecommendationsForUser(UserPredictionsRequestProto request) {
         List<Interaction> interactions = interactionService.getAllByUserId(request.getUserId());
         if (interactions.isEmpty())
-            return Collections.emptyList();
+            return Stream.empty();
 
         Map<Long, Double> ratedInteractions = getInteractionSortedByDays(interactions);
 
@@ -93,8 +92,7 @@ public class RecommendationServiceImpl implements RecommendationService {
                 )
                 .filter(it -> !interactionIds.contains(it.getEventId()))
                 .sorted(Comparator.comparing(RecommendedEventProto::getScore).reversed())
-                .limit(request.getMaxResults())
-                .toList();
+                .limit(request.getMaxResults());
     }
 
     private Map<Long, Double> getInteractionSortedByDays(List<Interaction> interactions) {

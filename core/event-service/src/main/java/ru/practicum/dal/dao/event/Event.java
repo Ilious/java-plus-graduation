@@ -68,7 +68,7 @@ public class Event {
     private String title;
 
     @Column(name = "views")
-    private Double ratings = 0.0;
+    private Double rating = 0.0;
 
     @ManyToMany(mappedBy = "events")
     private List<Compilation> compilations = new ArrayList<>();

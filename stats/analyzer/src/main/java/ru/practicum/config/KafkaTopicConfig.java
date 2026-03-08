@@ -2,13 +2,11 @@ package ru.practicum.config;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
-@Getter
-@Setter
+@Getter @Setter @ToString
 @ConfigurationProperties(prefix = "server.kafka.topic-config")
-@Component
 public class KafkaTopicConfig {
 
     private String userActions;

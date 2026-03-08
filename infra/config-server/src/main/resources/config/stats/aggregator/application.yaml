@@ -37,7 +37,7 @@ server:
 
 logging:
   level:
-    ru.yandex: TRACE
+    ru.practicum: TRACE
     org:
       springframework: ERROR
       apache.kafka: WARN

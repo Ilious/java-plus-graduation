@@ -38,7 +38,7 @@ public interface EventMapper {
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "publishedOn", ignore = true)
     @Mapping(target = "state", ignore = true)
-    @Mapping(target = "ratings", ignore = true)
+    @Mapping(target = "rating", ignore = true)
     @Mapping(target = "compilations", ignore = true)
     Event toEvent(NewEventDto newEventDto);
 
@@ -50,7 +50,7 @@ public interface EventMapper {
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "publishedOn", ignore = true)
     @Mapping(target = "state", ignore = true)
-    @Mapping(target = "ratings", ignore = true)
+    @Mapping(target = "rating", ignore = true)
     @Mapping(target = "compilations", ignore = true)
     void updateEventFromUserRequest(UpdateEventUserRequest updateEventUserRequest, @MappingTarget Event event);
 
@@ -62,7 +62,7 @@ public interface EventMapper {
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "publishedOn", ignore = true)
     @Mapping(target = "state", ignore = true)
-    @Mapping(target = "ratings", ignore = true)
+    @Mapping(target = "rating", ignore = true)
     @Mapping(target = "compilations", ignore = true)
     void updateEventFromAdminRequest(UpdateEventAdminRequest updateEventAdminRequest, @MappingTarget Event event);
 

@@ -56,7 +56,6 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     public ParticipationRequestDto createRequest(Long userId, Long eventId) {
         checkExistsUser(userId);
-        sendActionRegister(userId, eventId, Instant.now());
 
         EventFullDto event = eventClient.getById(eventId);
 
@@ -94,6 +93,7 @@ public class RequestServiceImpl implements RequestService {
 
             int newConfirmed = event.getConfirmedRequests() + 1;
             eventClient.updateConfirmedRequests(eventId, newConfirmed);
+            sendActionRegister(userId, eventId, Instant.now());
         }
 
         ParticipationRequest savedRequest = requestRepository.save(request);

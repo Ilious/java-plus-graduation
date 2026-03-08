@@ -30,22 +30,23 @@ public class KafkaActionListener extends BaseProcessor<Long, UserActionAvro>
     @Override
     public void run() {
         Runtime.getRuntime().addShutdownHook(new Thread(consumer::wakeup));
-        consumer.subscribe(Collections.singleton(kafkaTopicConfig.getEventsSimilarity()));
+        consumer.subscribe(Collections.singleton(kafkaTopicConfig.getUserActions()));
 
         try {
-            ConsumerRecords<Long, UserActionAvro> records = consumer.poll(
-                    Duration.ofMillis(pollDurationMillis)
-            );
+            while (true) {
+                ConsumerRecords<Long, UserActionAvro> records = consumer.poll(
+                        Duration.ofMillis(pollDurationMillis)
+                );
 
-            int count = 0;
-            for (ConsumerRecord<Long, UserActionAvro> record: records) {
-                handleRecord(record);
+                int count = 0;
+                for (ConsumerRecord<Long, UserActionAvro> record : records) {
+                    handleRecord(record);
 
-                manageOffset(record, count, consumer);
+                    manageOffset(record, count, consumer);
 
-                count++;
+                    count++;
+                }
             }
-
         } catch (WakeupException e) {
             log.warn("KafkaActionListener got stop signal. Stopping KafkaActionListener");
         } catch (Exception e) {
@@ -62,6 +63,7 @@ public class KafkaActionListener extends BaseProcessor<Long, UserActionAvro>
 
     @Override
     protected void handleRecord(ConsumerRecord<Long, UserActionAvro> record) {
+        log.trace("handling record for key {}: {}", record.key(), record.value());
         UserActionAvro userActionAvro = record.value();
         interactionService.upsertInteraction(userActionAvro);
     }

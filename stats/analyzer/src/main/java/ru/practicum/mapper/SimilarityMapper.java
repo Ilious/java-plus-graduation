@@ -9,9 +9,9 @@ import ru.practicum.ewm.stats.avro.EventSimilarityAvro;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface SimilarityMapper {
 
-    @Mapping(source = "timestamp", target = "ts")
-    @Mapping(source = "eventA", target = "eventId1")
-    @Mapping(source = "eventB", target = "eventId2")
-    @Mapping(source = "score", target = "similarity")
-    Similarity toEntity(EventSimilarityAvro similarity);
+    @Mapping(source = "similarity.timestamp", target = "ts")
+    @Mapping(source = "id1", target = "eventId1")
+    @Mapping(source = "id2", target = "eventId2")
+    @Mapping(source = "similarity.score", target = "similarity")
+    Similarity toEntity(EventSimilarityAvro similarity, Long id1, Long id2);
 }
