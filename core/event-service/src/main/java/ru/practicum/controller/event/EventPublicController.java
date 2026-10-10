@@ -1,6 +1,5 @@
 package ru.practicum.controller.event;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
@@ -41,8 +40,7 @@ public class EventPublicController {
                                          @RequestParam(defaultValue = "false") Boolean onlyAvailable,
                                          @RequestParam(required = false) String sort,
                                          @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
-                                         @RequestParam(defaultValue = "10") @Positive Integer size,
-                                         HttpServletRequest httpServletRequest) {
+                                         @RequestParam(defaultValue = "10") @Positive Integer size) {
         log.info("Запрос на получение событий с фильтрацией");
         if (from < 0 || size <= 0) {
             throw new ValidationException("Некорректные параметры пагинации");
@@ -56,13 +54,26 @@ public class EventPublicController {
                 .onlyAvailable(onlyAvailable)
                 .sort(sort != null ? EventSort.valueOf(sort.toUpperCase()) : null)
                 .build();
-        return eventPublicService.getAll(filter, from, size, httpServletRequest);
+        return eventPublicService.getAll(filter, from, size);
     }
 
     @GetMapping("/{id}")
     public EventFullDto geEventById(@PathVariable @Positive Long id,
-                                    HttpServletRequest httpServletRequest) {
+                                    @RequestHeader("X-EWM-USER-ID") Long userId) {
         log.info("Запрос на получение события id = {}", id);
-        return eventPublicService.getById(id, httpServletRequest);
+        return eventPublicService.getById(id, userId);
+    }
+
+    @GetMapping("/recommendations")
+    public List<EventShortDto> getRecommendations(@RequestHeader("X-EWM-USER-ID") Long userId,
+                                                  @RequestParam(value = "max-result", required = false,
+                                                          defaultValue = "10L") Long maxResults) {
+        return eventPublicService.getRecommendationsForUser(userId, maxResults);
+    }
+
+    @PutMapping("/{eventId}/like")
+    public void sendLike(@RequestHeader("X-EWM-USER-ID") Long userId,
+                         @PathVariable @Positive Long eventId) {
+        eventPublicService.sendLike(userId, eventId);
     }
 }

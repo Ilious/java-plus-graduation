@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: collector
+  main:
+    banner-mode: off
+
+  kafka:
+    bootstrap-servers: ${SERVER_KAFKA_ADDRESS:localhost:9092}
+
+    producer:
+      properties:
+        "bootstrap.servers": ${spring.kafka.bootstrap-servers}
+        "client.id": collector-producer
+        "acks": 1
+        "key.serializer": "org.apache.kafka.common.serialization.LongSerializer"
+        "value.serializer": "ru.practicum.serializer.AvroSerializer"
+        "linger.ms": 0
+
+grpc:
+  server:
+    port: 0
+
+server:
+  port: 0
+  kafka:
+    topic-config:
+      user-actions: stats.user-actions.v1
+
+logging:
+  level:
+    ru.yandex: TRACE
+    org:
+      springframework: ERROR
+      apache.kafka: WARN

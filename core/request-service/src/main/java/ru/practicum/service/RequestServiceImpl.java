@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.client.CollectorClient;
 import ru.practicum.dal.dao.ParticipationRequest;
 import ru.practicum.dal.repository.RequestRepository;
 import ru.practicum.dto.*;
@@ -14,8 +15,10 @@ import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.feign.client.EventClient;
 import ru.practicum.feign.client.UserClient;
+import ru.practicum.grpc.stats.action.ActionTypeProto;
 import ru.practicum.mapper.RequestMapper;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +36,8 @@ public class RequestServiceImpl implements RequestService {
     private final UserClient userClient;
 
     private final EventClient eventClient;
+
+    private final CollectorClient collectorClient;
 
     private final RequestMapper requestMapper;
 
@@ -88,10 +93,15 @@ public class RequestServiceImpl implements RequestService {
 
             int newConfirmed = event.getConfirmedRequests() + 1;
             eventClient.updateConfirmedRequests(eventId, newConfirmed);
+            sendActionRegister(userId, eventId, Instant.now());
         }
 
         ParticipationRequest savedRequest = requestRepository.save(request);
         return requestMapper.toDto(savedRequest);
+    }
+
+    private void sendActionRegister(Long userId, Long eventId, Instant instant) {
+        collectorClient.collectUserAction(userId, eventId, ActionTypeProto.ACTION_REGISTER, instant);
     }
 
     @Override
@@ -186,6 +196,11 @@ public class RequestServiceImpl implements RequestService {
                 confirmedRequests.stream().map(requestMapper::toDto).toList(),
                 rejectedRequests.stream().map(requestMapper::toDto).toList()
         );
+    }
+
+    @Override
+    public boolean existsByUserAndEvent(Long userId, Long eventId) {
+        return requestRepository.existsByEventIdAndRequesterId(eventId, userId);
     }
 
     private EventFullDto checkUpdateEvent(Long userId, Long eventId) {

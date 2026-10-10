@@ -16,7 +16,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UpdateEventAdminRequest {
+public class
+UpdateEventAdminRequest {
     @Size(min = 20, max = 2000)
     private String annotation;
 
